@@ -22,7 +22,6 @@
     "firebase": "^12.5.0",
     "firebase-admin": "^13.6.0",
     "multer": "^2.0.2",
-    "openai": "^6.8.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

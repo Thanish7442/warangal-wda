@@ -1,4 +1,4 @@
-// public/js/chat.js
+/*// public/js/chat.js
 document.addEventListener('DOMContentLoaded', () => {
   const chatLog = document.getElementById('chatLog');
   const form = document.getElementById('chatForm');
@@ -50,4 +50,4 @@ document.addEventListener('DOMContentLoaded', () => {
       input.focus();
     }
   });
-});
+});*/

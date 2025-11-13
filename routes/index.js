@@ -41,7 +41,7 @@ router.post('/contact', async (req, res) => {
 
     await transporter.sendMail({
       from: process.env.FROM_EMAIL,
-      to: 'admissions@warangaldefence.ac.in', // academy email
+      to: 'warangaldefence@gmail.com', // academy email
       subject: `New contact form: ${payload.name || 'Unknown'}`,
       text: `Message: ${payload.message}\n\nContact: ${payload.email}\nPhone: ${payload.phone || 'N/A'}`
     });
@@ -54,9 +54,9 @@ router.post('/contact', async (req, res) => {
     return res.status(500).render('contact', { title: 'Contact - Warangal Defence Academy', success: false, error: true });
   }
 });
-
+/*
 module.exports = router;
 router.get('/chat', (req, res) => {
   res.render('chat', { title: 'AI Chat - Warangal Defence Academy' });
 });
-
+*/

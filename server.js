@@ -13,9 +13,22 @@ const { initFirebase } = require('./lib/db-firebase');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Top-level error handlers to avoid the process exiting on promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // don't exit; allow server to continue. Consider monitoring/restarting in prod.
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // don't exit here; log and continue to keep dev server alive
+});
+
 /* -------------------------
-   Basic setup
-   ------------------------- */
+  Basic setup (no OpenAI references)
+  ------------------------- */
+
+// No OpenAI integrations in this server.
+// Placeholder for any app-level setup not already handled below.
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -58,26 +71,35 @@ try {
 const db = firebase.db;
 
 /* Ensure default admin exists */
-(async () => {
-  try {
-    const snap = await db.collection('admins').limit(1).get();
-    if (snap.empty) {
-      const defaultUser = 'admin';
-      const defaultPass = 'password123';
-      const hash = await bcrypt.hash(defaultPass, 10);
-      await db.collection('admins').add({
-        username: defaultUser,
-        password_hash: hash,
-        created_at: firebase.admin.firestore.FieldValue.serverTimestamp()
-      });
-      console.log(`Created default admin: ${defaultUser} / ${defaultPass} (change immediately)`);
-    } else {
-      console.log('Admin exists in Firestore.');
+// Note: automatic Firestore admin seeding is disabled by default to avoid
+// crashes when the Firestore API or project permissions are not configured.
+// If you want to enable seeding a default admin on startup, set
+// ENABLE_FIRESTORE_SEED=true in your environment and ensure the Firestore
+// API is enabled for the project.
+if (process.env.ENABLE_FIRESTORE_SEED === 'true') {
+  (async () => {
+    try {
+      const snap = await db.collection('admins').limit(1).get();
+      if (snap.empty) {
+        const defaultUser = 'admin';
+        const defaultPass = 'password123';
+        const hash = await bcrypt.hash(defaultPass, 10);
+        await db.collection('admins').add({
+          username: defaultUser,
+          password_hash: hash,
+          created_at: firebase.admin.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`Created default admin: ${defaultUser} / ${defaultPass} (change immediately)`);
+      } else {
+        console.log('Admin exists in Firestore.');
+      }
+    } catch (err) {
+      console.error('Error ensuring default admin exists:', err);
     }
-  } catch (err) {
-    console.error('Error ensuring default admin exists:', err);
-  }
-})();
+  })();
+} else {
+  console.log('Skipping Firestore admin seeding on startup (ENABLE_FIRESTORE_SEED not set)');
+}
 
 /* -------------------------
    Public routes
@@ -287,7 +309,29 @@ app.use((err, req, res, next) => {
   res.status(500).send('Server error');
 });
 
-/* Start server */
-app.listen(PORT, () => {
-  console.log(`Server running: http://localhost:${PORT}`);
-});
+/* Start server with graceful port retry on EADDRINUSE */
+function startServer(port, attemptsLeft = 5) {
+  const server = app.listen(port, () => {
+    console.log(`Server running: http://localhost:${port}`);
+  });
+
+  server.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+      console.warn(`Port ${port} in use.`);
+      if (attemptsLeft > 0) {
+        const nextPort = Number(port) + 1;
+        console.log(`Trying port ${nextPort} (${attemptsLeft - 1} attempts left)...`);
+        // small delay before retrying
+        setTimeout(() => startServer(nextPort, attemptsLeft - 1), 300);
+        return;
+      }
+      console.error(`All retry attempts exhausted. Could not bind to a port starting at ${process.env.PORT || 3000}.`);
+      process.exit(1);
+    }
+    // Other errors: rethrow
+    console.error('Server error:', err);
+    process.exit(1);
+  });
+}
+
+startServer(PORT, 5);

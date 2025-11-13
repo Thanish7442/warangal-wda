@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title><%= title || 'Warangal Defence Academy' %></title>
+
+  <!-- Favicon (optional) -->
+  <link rel="icon" href="/favicon.png
+" type="image/png">
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN (quick) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- main stylesheet -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="antialiased text-slate-900 bg-gradient-to-b from-slate-50 to-white">
+  <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b">
+    <div class="container mx-auto px-6 py-3 flex items-center justify-between gap-4">
+      <!-- Logo + Title -->
+      <a href="/" class="flex items-center gap-3">
+        <!-- Use `logo` class for animation. Add `pulse` if you want continuous gentle glow. -->
+        <img src="/images/logo.jpg" alt="Warangal Defence Academy Logo" class="logo w-14 h-14 object-contain" />
+        <div>
+          <div class="font-semibold text-lg" style="font-family: Inter, system-ui, -apple-system;">Warangal Defence Academy</div>
+          <div class="text-xs text-slate-500 tracking-wide">Hard Work • Defence • Success</div>
+        </div>
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <a href="/" class="hover:text-slate-700 transition">Home</a>
+        <a href="/about" class="hover:text-slate-700 transition">About</a>
+        <a href="/courses" class="hover:text-slate-700 transition">Courses</a>
+        <a href="/contact" class="hover:text-slate-700 transition">Contact</a>
+        <a href="/chat" class="ml-4 inline-flex items-center gap-2 px-3 py-2 rounded-lg border">AI Chat</a>
+      </nav>
+
+      <!-- Right-side CTA (desktop) -->
+      <div class="hidden md:flex items-center gap-3">
+        <a href="/contact" class="px-4 py-2 rounded-lg bg-gradient-to-r from-slate-800 to-sky-600 text-white font-semibold shadow">Apply Now</a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded hover:bg-slate-100" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile navigation panel (hidden by default) -->
+    <div id="mobileNav" class="md:hidden hidden border-t bg-white">
+      <div class="px-6 py-4 flex flex-col gap-3">
+        <a href="/" class="py-2 border-b">Home</a>
+        <a href="/about" class="py-2 border-b">About</a>
+        <a href="/courses" class="py-2 border-b">Courses</a>
+        <a href="/contact" class="py-2 border-b">Contact</a>
+        <a href="/#chat" class="py-2 border-b">AI Chat</a>
+        <a href="/contact" class="mt-2 inline-block px-4 py-2 rounded-lg bg-gradient-to-r from-slate-800 to-sky-600 text-white text-center">Apply Now</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- main container start: pages will include footer after content -->
+  <main class="container mx-auto px-6 py-8">
+

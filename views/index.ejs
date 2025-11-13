@@ -1,0 +1,73 @@
+<%- include('partials/header') %>
+
+<section class="grid md:grid-cols-2 gap-8 items-center">
+  <div>
+    <div class="kicker">Admissions open • Limited seats</div>
+    <h2 class="text-4xl font-extrabold leading-tight mt-2">Train with purpose. Serve with pride.</h2>
+    <p class="lead mt-4">Comprehensive physical training, focused academics and interview coaching to prepare you for NDA, CDS and other defence entrances. Hands-on drills, mock-SSBs and mental resilience training.</p>
+
+    <div class="mt-6 flex gap-3">
+      <a href="/contact" class="btn btn-primary">Apply Now</a>
+      <a href="/courses" class="btn btn-ghost">View Courses</a>
+    </div>
+
+    <div class="mt-6 grid grid-cols-3 gap-4 text-sm text-slate-600">
+      <div class="flex items-start gap-3">
+        <div class="p-2 rounded-lg bg-white shadow-sm">📚</div>
+        <div>
+          <div class="font-semibold">Proven Curriculum</div>
+          <div class="text-xs">Structured syllabus & mock tests</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="p-2 rounded-lg bg-white shadow-sm">👨‍🏫</div>
+        <div>
+          <div class="font-semibold">Experienced Trainers</div>
+          <div class="text-xs">Ex-defence & certified coaches</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="p-2 rounded-lg bg-white shadow-sm">📍</div>
+        <div>
+          <div class="font-semibold">Prime Location</div>
+          <div class="text-xs">Warangal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="rounded-2xl overflow-hidden hero">
+      <img src="/images/picture.png" alt="training" class="w-full h-150 object-cover hero-img" />
+    </div>
+
+    <div class="next-batch mt-4">
+     <%# <div class="text-xs text-slate-500">Next Batch</div>
+      <div class="font-semibold">Starts: 1 Dec 2025</div>
+      <div class="text-xs">Limited seats available — reserve now</div>%>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials block -->
+<section class="mt-12">
+  <h3 class="text-xl font-semibold">What our students say</h3>
+  <div class="mt-4 grid md:grid-cols-3 gap-4">
+    <div class="testimonial" style="display:block;">
+      <p class="italic">"WDA transformed my approach — the mock SSBs were invaluable."</p>
+      <div class="mt-3 text-xs text-slate-500">— R. Kumar, Selected NDA 2024</div>
+    </div>
+
+    <div class="testimonial" style="display:none;">
+      <p class="italic">"Coaches pushed me to a new level of fitness and confidence."</p>
+      <div class="mt-3 text-xs text-slate-500">— S. Rao, CDS 2023</div>
+    </div>
+
+    <div class="testimonial" style="display:none;">
+      <p class="italic">"Personalized attention made all the difference."</p>
+      <div class="mt-3 text-xs text-slate-500">— M. Priya, SSB Finalist</div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

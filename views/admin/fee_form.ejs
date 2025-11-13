@@ -1,0 +1,23 @@
+<%- include('../partials/header') %>
+
+<div class="max-w-lg mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-xl font-semibold mb-4">Add Payment</h2>
+
+  <form method="POST" action="/admin/fees" class="grid gap-3">
+    <label class="text-sm">Student</label>
+    <select name="student_id" class="px-3 py-2 rounded border">
+      <option value="">(Unassigned)</option>
+      <% students.forEach(s => { %>
+        <option value="<%= s.id %>"><%= s.fullname %></option>
+      <% }) %>
+    </select>
+
+    <input name="amount" placeholder="Amount (₹)" class="px-3 py-2 rounded border" required />
+    <input name="method" placeholder="Method (cash/online)" class="px-3 py-2 rounded border" />
+    <textarea name="note" placeholder="Note" class="px-3 py-2 rounded border"></textarea>
+
+    <button class="px-4 py-2 rounded bg-slate-900 text-white">Save Payment</button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

@@ -38,6 +38,12 @@
         <a href="/courses" class="hover:text-slate-700 transition">Courses</a>
         <a href="/contact" class="hover:text-slate-700 transition">Contact</a>
         <a href="/chat" class="ml-4 inline-flex items-center gap-2 px-3 py-2 rounded-lg border">AI Chat</a>
+        <% if (locals && locals.admin && locals.admin.username) { %>
+        <a href="/admin" class="hover:text-slate-700">Admin</a>
+        <% } else { %>
+        <a href="/admin/login" class="hover:text-slate-700">Admin</a>
+        <% } %>
+
       </nav>
 
       <!-- Right-side CTA (desktop) -->

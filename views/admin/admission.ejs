@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+
+<section class="mt-8 max-w-2xl">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold">Admission #<%= admission.id %></h2>
+    <a href="/admin" class="px-3 py-2 border rounded">Back</a>
+  </div>
+
+  <div class="mt-4 bg-white p-4 rounded shadow">
+    <div><strong>Name:</strong> <%= admission.name %></div>
+    <div><strong>Email:</strong> <%= admission.email %></div>
+    <div><strong>Phone:</strong> <%= admission.phone %></div>
+    <div><strong>Course:</strong> <%= admission.course %></div>
+    <div><strong>DOB:</strong> <%= admission.dob %></div>
+    <div class="mt-2"><strong>Message:</strong><div class="mt-1 p-2 bg-slate-50 rounded"><%= admission.message %></div></div>
+
+    <div class="mt-4">
+      <form method="POST" action="/admin/admissions/<%= admission.id %>/update-fee" class="flex gap-2 items-center">
+        <input name="amount" value="<%= admission.fee_amount || 0 %>" class="px-3 py-2 rounded border w-36" />
+        <button class="px-3 py-2 bg-slate-900 text-white rounded">Update Fee</button>
+      </form>
+    </div>
+
+    <div class="mt-4 flex gap-2">
+      <form method="POST" action="/admin/admissions/<%= admission.id %>/toggle-paid">
+        <button class="px-3 py-2 border rounded"><%= admission.fee_paid ? 'Mark unpaid' : 'Mark paid' %></button>
+      </form>
+      <form method="POST" action="/admin/admissions/<%= admission.id %>/delete" onsubmit="return confirm('Delete this admission?')">
+        <button class="px-3 py-2 border rounded text-red-600">Delete</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

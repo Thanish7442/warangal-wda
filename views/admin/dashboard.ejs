@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<div class="flex items-center justify-between gap-4">
+  <h2 class="text-2xl font-semibold">Admin Dashboard</h2>
+  <div>
+    <a href="/admin/students" class="px-3 py-2 rounded border mr-2">Students</a>
+    <a href="/admin/fees" class="px-3 py-2 rounded border mr-2">Fees</a>
+    <a href="/admin/logout" class="px-3 py-2 rounded bg-red-50 text-red-700">Logout</a>
+  </div>
+</div>
+
+<div class="grid md:grid-cols-2 gap-6 mt-6">
+  <div class="bg-white p-4 rounded shadow">
+    <div class="text-sm text-slate-500">Total Students</div>
+    <div class="text-3xl font-bold"><%= stats.students %></div>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <div class="text-sm text-slate-500">Total Payments</div>
+    <div class="text-3xl font-bold"><%= stats.fees %></div>
+  </div>
+</div>
+
+<div class="mt-6 grid md:grid-cols-2 gap-6">
+  <div>
+    <h4 class="font-semibold">Recent Students</h4>
+    <ul class="mt-3 space-y-2">
+      <% students.forEach(s => { %>
+        <li class="p-3 bg-white rounded shadow">
+          <div class="font-medium"><%= s.fullname %></div>
+          <div class="text-xs text-slate-500"><%= s.course %> • <%= s.phone %></div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <div>
+    <h4 class="font-semibold">Recent Payments</h4>
+    <ul class="mt-3 space-y-2">
+      <% fees.forEach(f => { %>
+        <li class="p-3 bg-white rounded shadow">
+          <div class="font-medium">₹<%= f.amount %> — <%= f.fullname || 'Unknown' %></div>
+          <div class="text-xs text-slate-500"><%= new Date(f.paid_on).toLocaleString() %> • <%= f.method %></div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

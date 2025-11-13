@@ -1,0 +1,18 @@
+<%- include('../partials/header') %>
+
+<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-xl font-semibold mb-4"><%= student ? 'Edit Student' : 'Add Student' %></h2>
+
+  <form method="POST" action="<%= student ? '/admin/students/' + student.id : '/admin/students' %>" class="grid gap-3">
+    <input name="fullname" value="<%= student ? student.fullname : '' %>" placeholder="Full name" class="px-3 py-2 rounded border" required />
+    <input name="email" value="<%= student ? student.email : '' %>" placeholder="Email" class="px-3 py-2 rounded border" />
+    <input name="phone" value="<%= student ? student.phone : '' %>" placeholder="Phone" class="px-3 py-2 rounded border" />
+    <input name="course" value="<%= student ? student.course : '' %>" placeholder="Course" class="px-3 py-2 rounded border" />
+    <input name="dob" value="<%= student ? student.dob : '' %>" placeholder="Date of birth" class="px-3 py-2 rounded border" type="date" />
+    <textarea name="notes" placeholder="Notes" class="px-3 py-2 rounded border"><%= student ? student.notes : '' %></textarea>
+
+    <button class="px-4 py-2 rounded bg-slate-900 text-white"><%= student ? 'Save' : 'Create' %></button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

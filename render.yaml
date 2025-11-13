@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: warangal-wda
+    env: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: PORT
+        fromService: ${PORT}

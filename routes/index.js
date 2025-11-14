@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-// Optional: enable nodemailer by uncommenting and configuring .env values
-// const nodemailer = require('nodemailer');
-
 router.get('/', (req, res) => {
   res.render('index', { title: 'Warangal Defence Academy' });
 });
@@ -54,9 +51,8 @@ router.post('/contact', async (req, res) => {
     return res.status(500).render('contact', { title: 'Contact - Warangal Defence Academy', success: false, error: true });
   }
 });
-/*
+
 module.exports = router;
-router.get('/chat', (req, res) => {
-  res.render('chat', { title: 'AI Chat - Warangal Defence Academy' });
-});
-*/
+
+// Optional chat page (uncomment to enable)
+// router.get('/chat', (req, res) => res.render('chat', { title: 'AI Chat - Warangal Defence Academy' }));

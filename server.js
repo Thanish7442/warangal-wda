@@ -53,52 +53,65 @@ app.use((req, res, next) => {
 });
 
 /* -------------------------
-   Initialize Firestore
+   Initialize Firestore (optional) or fall back to SQLite routers
    ------------------------- */
+let useFirestore = false;
+let firebase = null;
+let db = null;
 const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT;
-if (!serviceAccountPath) {
-  console.error('FIREBASE_SERVICE_ACCOUNT not set in .env (expected path to service account JSON).');
-  process.exit(1);
-}
-let firebase;
-try {
-  firebase = initFirebase(serviceAccountPath); // returns { admin, db }
-  console.log('Initialized Firebase Firestore');
-} catch (err) {
-  console.error('Failed to init Firebase:', err);
-  process.exit(1);
-}
-const db = firebase.db;
-
-/* Ensure default admin exists */
-// Note: automatic Firestore admin seeding is disabled by default to avoid
-// crashes when the Firestore API or project permissions are not configured.
-// If you want to enable seeding a default admin on startup, set
-// ENABLE_FIRESTORE_SEED=true in your environment and ensure the Firestore
-// API is enabled for the project.
-if (process.env.ENABLE_FIRESTORE_SEED === 'true') {
-  (async () => {
-    try {
-      const snap = await db.collection('admins').limit(1).get();
-      if (snap.empty) {
-        const defaultUser = 'admin';
-        const defaultPass = 'password123';
-        const hash = await bcrypt.hash(defaultPass, 10);
-        await db.collection('admins').add({
-          username: defaultUser,
-          password_hash: hash,
-          created_at: firebase.admin.firestore.FieldValue.serverTimestamp()
-        });
-        console.log(`Created default admin: ${defaultUser} / ${defaultPass} (change immediately)`);
-      } else {
-        console.log('Admin exists in Firestore.');
-      }
-    } catch (err) {
-      console.error('Error ensuring default admin exists:', err);
-    }
-  })();
+if (serviceAccountPath) {
+  try {
+    firebase = initFirebase(serviceAccountPath); // returns { admin, db }
+    db = firebase.db;
+    useFirestore = true;
+    console.log('Initialized Firebase Firestore');
+  } catch (err) {
+    console.warn('Failed to init Firebase (falling back to SQLite routes):', err && err.message ? err.message : err);
+    useFirestore = false;
+  }
 } else {
-  console.log('Skipping Firestore admin seeding on startup (ENABLE_FIRESTORE_SEED not set)');
+  console.log('FIREBASE_SERVICE_ACCOUNT not set — using SQLite-based routes');
+}
+
+/* If Firestore is enabled, set up Firestore-backed routes; otherwise mount
+   the existing SQLite routers under `routes/` which ship with the project. */
+if (!useFirestore) {
+  // mount sqlite-based routers
+  try {
+    const indexRouter = require('./routes/index');
+    const adminRouter = require('./routes/admin');
+    app.use('/', indexRouter);
+    app.use('/admin', adminRouter);
+    console.log('Mounted SQLite-based routers from ./routes');
+  } catch (err) {
+    console.error('Error mounting SQLite routers:', err);
+  }
+} else {
+  // Firestore is available — optionally seed admin if requested
+  if (process.env.ENABLE_FIRESTORE_SEED === 'true') {
+    (async () => {
+      try {
+        const snap = await db.collection('admins').limit(1).get();
+        if (snap.empty) {
+          const defaultUser = 'admin';
+          const defaultPass = 'password123';
+          const hash = await bcrypt.hash(defaultPass, 10);
+          await db.collection('admins').add({
+            username: defaultUser,
+            password_hash: hash,
+            created_at: firebase.admin.firestore.FieldValue.serverTimestamp()
+          });
+          console.log(`Created default admin: ${defaultUser} / ${defaultPass} (change immediately)`);
+        } else {
+          console.log('Admin exists in Firestore.');
+        }
+      } catch (err) {
+        console.error('Error ensuring default admin exists:', err);
+      }
+    })();
+  } else {
+    console.log('Skipping Firestore admin seeding on startup (ENABLE_FIRESTORE_SEED not set)');
+  }
 }
 
 /* -------------------------

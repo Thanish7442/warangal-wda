@@ -48,6 +48,57 @@
     </div>
   </div>
 </section>
+<!-- ================================
+     BROCHURE CAROUSEL SECTION (Homepage)
+     ================================ -->
+<section class="brochure-carousel-section" id="brochures" aria-label="Brochures" style="padding-top:2rem;">
+  <div class="container">
+    <div class="carousel-header" style="align-items:flex-start;">
+      <div>
+        <h2 class="section-title">Explore Our Brochures</h2>
+        <p class="section-sub" style="max-width:720px;">
+          Get complete information about our courses, training schedules, admission process,
+          physical coaching, hostel facilities, fee structure and the disciplined life 
+          at Warangal Defence Academy.
+        </p>
+      </div>
+
+      <div class="carousel-controls" aria-hidden="false">
+        <button class="carousel-btn prev" aria-label="Previous brochure">&larr;</button>
+        <button class="carousel-btn next" aria-label="Next brochure">&rarr;</button>
+      </div>
+    </div>
+
+    <div class="brochure-carousel" tabindex="0">
+      <div class="carousel-track">
+        <% const bros = [
+          {src:'/images/brochure1.jpg', alt:'Courses Overview'},
+          {src:'/images/brochure2.jpg', alt:'Admission Details'},
+          {src:'/images/brochure3.jpg', alt:'Hostel & Facilities'},
+          {src:'/images/brochure4.jpg', alt:'Physical Training'},
+          {src:'/images/brochure5.jpg', alt:'Fee Structure'},
+          {src:'/images/brochure6.jpg', alt:'Academy Life'}
+        ]; %>
+
+        <% bros.forEach(function(b, i){ %>
+          <a class="carousel-item" href="<%= b.src %>" target="_blank" rel="noopener noreferrer" aria-label="Open <%= b.alt %>">
+            <div class="carousel-media">
+              <img src="<%= b.src %>" alt="Brochure - <%= b.alt %>" loading="lazy" decoding="async">
+              <div class="carousel-overlay">
+                <span class="overlay-text">View / Download</span>
+              </div>
+            </div>
+            <div class="carousel-caption">Brochure <%= i+1 %> — <%= b.alt %></div>
+          </a>
+        <% }); %>
+      </div>
+
+      <div class="carousel-dots" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+<!-- ================================ -->
+
 
 <!-- Testimonials block -->
 <section class="mt-12">

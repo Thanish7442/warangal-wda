@@ -1,0 +1,36 @@
+<!-- views/partials/flipbook.ejs -->
+<section class="flipbook-wrap" aria-label="Brochure flipbook">
+  <div class="container">
+    <h2 class="flipbook-title">Explore Our Academy Brochure</h2>
+    <p class="flipbook-sub">Discover courses, schedules, admission process, facilities and fees in this interactive flipbook.</p>
+
+    <div class="flipbook-stage" id="flipbook-stage" role="application" aria-roledescription="flipbook">
+      <div class="flipbook-viewer" id="flipbook-viewer" tabindex="0" aria-live="polite"></div>
+
+      <!-- controls -->
+      <button class="flip-prev flip-control" id="flip-prev" aria-label="Previous page">&lsaquo;</button>
+      <button class="flip-next flip-control" id="flip-next" aria-label="Next page">&rsaquo;</button>
+
+      <div class="flip-ui">
+        <div class="flip-pageno" id="flip-pageno">1 / 1</div>
+        <div class="flip-actions">
+          <button id="flip-zoom" title="Toggle zoom" aria-label="Toggle zoom">🔍</button>
+          <a id="flip-download" class="btn" download="" href="#" aria-label="Download current spread">Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // pages array: list of image paths (relative to /public)
+  // Edit this list to match your images (use even number for perfect spreads)
+  window.FLIPBOOK_PAGES = [
+    '/images/flipbook/page1.jpg',
+    '/images/flipbook/page2.jpg',
+    '/images/flipbook/page3.jpg',
+    '/images/flipbook/page4.jpg',
+    '/images/flipbook/page5.jpg',
+    '/images/flipbook/page6.jpg'
+  ];
+</script>

@@ -1,0 +1,135 @@
+/* public/css/flipbook.css */
+
+.flipbook-wrap { padding: 3rem 1rem; background: #f8f3e6; }
+.flipbook-title { text-align:center; font-size:2rem; margin:0 0 0.25rem; }
+.flipbook-sub { text-align:center; color:#555; margin:0 0 1.2rem; }
+
+/* stage */
+.flipbook-stage {
+  position:relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  perspective: 2200px; /* controls depth */
+}
+.flipbook-viewer {
+  width: 100%;
+  height: 540px;            /* adjust height for your images */
+  max-height: 75vh;
+  margin: 0 auto;
+  position: relative;
+  transform-style: preserve-3d;
+  overflow: visible;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* spread (two pages side-by-side) container */
+.flip-spread {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  perspective: 2200px;
+}
+
+/* left and right page containers */
+.flip-page {
+  width: 50%;
+  height: calc(100% - 20px);
+  box-sizing: border-box;
+  padding: 10px;
+  position: relative;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+}
+
+/* right page rotates from right origin */
+.flip-page.right { transform-origin: right center; }
+
+/* page face (image) */
+.page-face {
+  position:absolute;
+  inset: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  background: #fff;
+}
+.page-face img {
+  width: 100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+}
+
+/* The flipping element sits above a static page */
+
+.flip-anim {
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+  pointer-events:none;
+  z-index: 50;
+}
+
+/* page shadow and gradient for realism */
+.flip-shadow {
+  position:absolute;
+  inset:0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.02));
+  opacity:0;
+  transition:opacity 220ms;
+  pointer-events:none;
+}
+
+/* control buttons */
+.flip-control {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:44px; height:44px;
+  border-radius:50%;
+  background: rgba(255,255,255,0.9);
+  border: 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  cursor:pointer;
+  z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+}
+.flip-prev { left: -12px; }
+.flip-next { right: -12px; }
+
+/* UI bottom */
+.flip-ui {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 8px;
+  display:flex; align-items:center; gap:12px;
+  z-index:200;
+  background: rgba(255,255,255,0.85);
+  padding:6px 10px; border-radius:999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.flip-pageno { font-weight:600; color:#111; }
+
+/* responsive */
+@media (max-width:900px) {
+  .flipbook-viewer { height: 420px; }
+  .flip-control { width:38px; height:38px; font-size:18px; }
+}
+@media (max-width:560px) {
+  .flipbook-viewer { height: 360px; }
+  .flip-page { padding:6px; }
+  .flip-prev { left: -6px; } .flip-next { right: -6px; }
+}

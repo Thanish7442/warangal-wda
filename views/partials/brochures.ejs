@@ -1,0 +1,31 @@
+<!-- views/partials/brochures.ejs -->
+<section class="brochures-section" id="brochures" aria-label="Brochures">
+  <div class="container">
+    <h2 class="section-title">Our Brochures</h2>
+    <p class="section-sub">Preview and download our training & admission brochures</p>
+
+    <div class="brochure-grid" aria-live="polite">
+      <% const bros = [
+         {src:'/images/brochures/brochure1.jpg', alt:'WDA Brochure 1'},
+         {src:'/images/brochures/brochure2.jpg', alt:'WDA Brochure 2'},
+         {src:'/images/brochures/brochure3.jpg', alt:'WDA Brochure 3'},
+         {src:'/images/brochures/brochure4.jpg', alt:'WDA Brochure 4'},
+         {src:'/images/brochures/brochure5.jpg', alt:'WDA Brochure 5'},
+         {src:'/images/brochures/brochure6.jpg', alt:'WDA Brochure 6'}
+      ]; %>
+
+      <% bros.forEach(function(b, i){ %>
+        <a class="brochure-card" href="<%= b.src %>" target="_blank" rel="noopener noreferrer" aria-label="Open <%= b.alt %> in new tab">
+          <div class="brochure-media" data-index="<%= i %>">
+            <img class="brochure-img" src="<%= b.src %>" alt="<%= b.alt %>" loading="lazy" decoding="async" />
+            <div class="brochure-overlay" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="icon-download" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zm7-18L5.33 9h3.67v6h6V9h3.67L12 2z"/></svg>
+              <span class="overlay-text">View / Download</span>
+            </div>
+          </div>
+          <div class="brochure-caption">Brochure <%= i+1 %></div>
+        </a>
+      <% }); %>
+    </div>
+  </div>
+</section>

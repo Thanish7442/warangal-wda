@@ -1,13 +1,51 @@
-  </main>
+  </main> <!-- end main -->
 
-  <footer class="bg-white border-t">
-    <div class="container mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-sm">© <%= new Date().getFullYear() %> Warangal Defence Academy — All rights reserved.</div>
-      <div class="text-sm">Designed with discipline • Built for results</div>
+  <!-- site footer -->
+  <footer class="site-footer" role="contentinfo" style="padding:2rem 0; border-top:1px solid rgba(0,0,0,0.04); margin-top:3rem;">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <div>© <%= new Date().getFullYear() %> Warangal Defence Academy. All rights reserved.</div>
+      <div style="color:#6b7280">Contact: +91-XXXXXXXXXX</div>
     </div>
   </footer>
 
-  <script src="/js/main.js"></script>
+  <!-- Animated pricing card (example) -->
+  <div class="pricing-wrap">
+    <div class="pricing-card">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="pricing-badge">SAVE 70%</span>
+          <div class="pricing-title">Web Hosting Starter</div>
+        </div>
+        <div class="text-right">
+          <div class="pricing-price">₹ 89<span style="font-size:0.6em;font-weight:600">.00</span><small>/mo</small></div>
+        </div>
+      </div>
+
+      <div class="pricing-features">
+        <ul style="padding-left:1.05rem;margin-top:.6rem;">
+          <li>1 website</li>
+          <li>10 GB NVMe storage</li>
+          <li>cPanel included</li>
+          <li>30-day money-back guarantee</li>
+        </ul>
+      </div>
+
+      <div class="pricing-cta">
+        <a href="/contact" class="btn btn-primary">Buy Now</a>
+        <a href="/about" class="btn btn-ghost">Learn more</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Your global scripts -->
+  <script src="/js/main.js" defer></script>
+
+  <!-- Brochures carousel JS -->
+  <script src="/js/brochures-carousel.js" defer></script>
+  
+
+  <!-- If you still have the tilt/reveal script (optional) -->
+  <script src="/js/brochures.js" defer></script>
+
 </body>
 </html>
-

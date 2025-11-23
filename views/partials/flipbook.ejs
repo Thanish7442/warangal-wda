@@ -1,21 +1,21 @@
 <!-- views/partials/flipbook.ejs -->
-<section class="flipbook-wrap" aria-label="Brochure flipbook">
+<section class="flipbook-wrap" aria-label="Brochure flipbook section">
   <div class="container">
     <h2 class="flipbook-title">Explore Our Academy Brochure</h2>
-    <p class="flipbook-sub">Discover courses, schedules, admission process, facilities and fees in this interactive flipbook.</p>
+    <p class="flipbook-sub">Discover detailed information about our courses, facilities, training programs and life at Warangal Defence Academy through this interactive flipbook.</p>
 
     <div class="flipbook-stage" id="flipbook-stage" role="application" aria-roledescription="flipbook">
-      <div class="flipbook-viewer" id="flipbook-viewer" tabindex="0" aria-live="polite"></div>
+      <div id="flipbook-viewer" class="flipbook-viewer" tabindex="0" aria-live="polite"></div>
 
       <!-- controls -->
-      <button class="flip-prev flip-control" id="flip-prev" aria-label="Previous page">&lsaquo;</button>
-      <button class="flip-next flip-control" id="flip-next" aria-label="Next page">&rsaquo;</button>
+      <button id="flip-prev" class="flip-control flip-prev" aria-label="Previous page">&lsaquo;</button>
+      <button id="flip-next" class="flip-control flip-next" aria-label="Next page">&rsaquo;</button>
 
       <div class="flip-ui">
-        <div class="flip-pageno" id="flip-pageno">1 / 1</div>
+        <div id="flip-pageno" class="flip-pageno">1 / 1</div>
         <div class="flip-actions">
-          <button id="flip-zoom" title="Toggle zoom" aria-label="Toggle zoom">🔍</button>
-          <a id="flip-download" class="btn" download="" href="#" aria-label="Download current spread">Download</a>
+          <button id="flip-zoom" class="flip-action" title="Toggle zoom" aria-label="Toggle zoom">🔍</button>
+          <a id="flip-download" class="flip-action" title="Download current page" aria-label="Download current page" href="#" download>⬇</a>
         </div>
       </div>
     </div>
@@ -23,14 +23,14 @@
 </section>
 
 <script>
-  // pages array: list of image paths (relative to /public)
-  // Edit this list to match your images (use even number for perfect spreads)
+  // List of page images. Ensure these files exist in public/images/flipbook/
+  // Pairing: pages[0] (left) + pages[1] (right) => spread 1
   window.FLIPBOOK_PAGES = [
-    '/images/flipbook/page1.jpg',
-    '/images/flipbook/page2.jpg',
-    '/images/flipbook/page3.jpg',
-    '/images/flipbook/page4.jpg',
-    '/images/flipbook/page5.jpg',
-    '/images/flipbook/page6.jpg'
+    '/images/flipbook/brochure1.jpg',
+    '/images/flipbook/brochure2.jpg',
+    '/images/flipbook/brochure3.jpg',
+    '/images/flipbook/brochure4.jpg',
+    '/images/flipbook/brochure5.jpg',
+    '/images/flipbook/brochure6.jpg'
   ];
 </script>

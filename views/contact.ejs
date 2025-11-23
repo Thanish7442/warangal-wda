@@ -1,56 +1,132 @@
 <%- include('partials/header') %>
 
 <section class="md:flex md:gap-12">
+
+  <!-- LEFT SIDE — FORM BOX -->
   <div class="md:w-1/2 bg-white p-6 rounded-2xl shadow">
     <h3 class="text-2xl font-bold">Contact / Admissions</h3>
-    <p class="mt-2 text-slate-600">Fill this form to request an admission counsellor call. We'll guide you through batches, fees and schedule.</p>
+    <p class="mt-2 text-slate-600">
+      Fill this form to request an admission counsellor call. We'll guide you through batches, fees and schedule.
+    </p>
 
     <% if (success) { %>
-      <div class="mt-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded">Thanks — your message was received. We'll contact you shortly.</div>
+      <div class="mt-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded">
+        Thanks — your message was received. We'll contact you shortly.
+      </div>
     <% } else if (typeof error !== 'undefined' && error) { %>
-      <div class="mt-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded">An error occured. Please try again later.</div>
+      <div class="mt-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded">
+        An error occured. Please try again later.
+      </div>
     <% } %>
 
-    <form action="/contact" method="POST" class="mt-6 grid grid-cols-1 gap-4">
-      <input name="name" placeholder="Full name" class="px-4 py-3 rounded-lg border" required />
-      <input name="email" placeholder="Email" type="email" class="px-4 py-3 rounded-lg border" required />
-      <input name="phone" placeholder="Phone" class="px-4 py-3 rounded-lg border" />
-      <select name="course" class="px-4 py-3 rounded-lg border">
+    <!-- CONTACT FORM -->
+    <form id="contactForm" class="space-y-3 max-w-xl mt-4">
+
+      <input name="name" id="name" required placeholder="Your name"
+             class="w-full p-3 rounded border"/>
+
+      <input name="email" id="email" type="email" required placeholder="Email"
+             class="w-full p-3 rounded border"/>
+
+      <input name="phone" id="phone" placeholder="Phone (optional)"
+             class="w-full p-3 rounded border"/>
+
+      <!-- COURSE SELECT -->
+      <select name="course" id="course" class="w-full px-4 py-3 rounded-lg border">
         <option value="">Interested course (optional)</option>
         <option value="nda">NDA + MPC + JEE + DEFENCE Foundation</option>
         <option value="aps">BiPC/CEC/MEC + DEFENCE + NDA COURSE</option>
-        <%#<option value="crash">Crash Course — Prelims</option>%>
       </select>
-      <textarea name="message" placeholder="Your message / queries" class="px-4 py-3 rounded-lg border" rows="4"></textarea>
 
-      <button type="submit" class="mt-2 px-4 py-3 rounded-lg bg-slate-900 text-white">Submit</button>
+      <textarea name="message" id="message" required rows="5"
+                placeholder="Your message" class="w-full p-3 rounded border"></textarea>
+
+      <button type="submit" class="px-4 py-2 rounded bg-[#0d47a1] text-white">
+        Send
+      </button>
+
+      <div id="contactFeedback" class="text-sm mt-2"></div>
     </form>
   </div>
 
+  <!-- RIGHT SIDE — MAP + CONTACT INFO -->
   <div class="md:w-1/2 mt-6 md:mt-0">
-    <div class="bg-white p-6 rounded-2xl shadow">
-      <h4 class="font-semibold">Our Location</h4>
-      <div class="mt-4 h-48 rounded-lg overflow-hidden border">
-        <!-- Replace iframe src with your Google Maps embed link -->
-        <iframe title="wda-map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3" class="w-full h-full" />
-      </div>
 
-      <div class="mt-4 flex items-center gap-3">
-        <div class="font-medium">Warangal, Telangana</div>
-      </div>
+    <h3 class="text-2xl font-bold">Get in Touch</h3>
+    <p class="mt-2 text-slate-600">
+      We're here to help! Reach out via phone, email, or visit us at our academy.
+    </p>
 
-      <div class="mt-4 flex gap-3 text-sm">
-        <a href="tel:+919876543210" class="px-3 py-2 rounded-lg border">Call</a>
-        <a href="mailto:warangaldefence@gmail.com" class="px-3 py-2 rounded-lg border">Email</a>
-      </div>
+    <!-- MAP BOX (RIGHT SIDE) -->
+    <div class="mt-6 w-full h-64 overflow-hidden rounded-lg border">
+      <iframe
+        class="w-full h-full"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2041.207738758431!2d79.5872654!3d17.9434954!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a335ac5da5d6f37%3A0x708d9a70d4bcb323!2sGanapathy%20Engineering%20College!5e1!3m2!1sen!2sin!4v1763832115488!5m2!1sen!2sin" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"
+        title="Warangal Defence Academy Location">
+      </iframe>
     </div>
 
-    <div class="mt-6 text-sm text-slate-600">
-      <div class="font-semibold">Office Hours</div>
-      <div class="mt-2">Mon — Sat: 9:00 AM — 6:00 PM</div>
-      <div>Sun: Closed</div>
+    <!-- ADDRESS -->
+    <div class="mt-4 text-sm text-slate-700 leading-relaxed">
+      <strong>Address:</strong> Warangal Defence Academy —  
+      Ganapathi Engineering College campus,  
+      Khammam Bypass Road, Hunter Road,  
+      Warangal.
     </div>
+
+    <!-- CONTACT DETAILS -->
+    <ul class="mt-6 space-y-4 text-slate-700">
+      <li>
+        <strong>Phone:</strong>
+        <a href="tel:+919876543210" class="text-blue-600 hover:underline">
+          +91 98765 43210
+        </a>
+      </li>
+      <li>
+        <strong>Email:</strong>
+        <a href="mailto:warangaldefenceacademy@gmail.com"
+           class="text-blue-600 hover:underline">
+          warangaldefenceacademy@gmail.com
+        </a>
+      </li>
+    </ul>
+
+    <%- include('partials/footer') %>
   </div>
+
 </section>
 
-<%- include('partials/footer') %>
+
+<!-- FORM AJAX SCRIPT (UNCHANGED) -->
+<script>
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const feedback = document.getElementById('contactFeedback');
+  feedback.textContent = 'Sending...';
+
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    course: document.getElementById('course').value,
+    message: document.getElementById('message').value.trim(),
+    page: window.location.href
+  };
+
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Send failed');
+    feedback.textContent = data.message || 'Message sent — thank you!';
+    e.target.reset();
+  } catch (err) {
+    feedback.textContent = 'Error: ' + err.message;
+  }
+});
+</script>

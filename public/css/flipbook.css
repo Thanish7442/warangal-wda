@@ -1,135 +1,121 @@
 /* public/css/flipbook.css */
+.flipbook-wrap { padding: 2.75rem 1rem; background: #f7f4ea; }
+.flipbook-title { text-align:center; font-size:2rem; margin:0 0 .35rem; }
+.flipbook-sub { text-align:center; color:#444; margin:0 0 1rem; max-width:1000px; margin-left:auto; margin-right:auto; }
 
-.flipbook-wrap { padding: 3rem 1rem; background: #f8f3e6; }
-.flipbook-title { text-align:center; font-size:2rem; margin:0 0 0.25rem; }
-.flipbook-sub { text-align:center; color:#555; margin:0 0 1.2rem; }
-
-/* stage */
-.flipbook-stage {
-  position:relative;
-  max-width: 1100px;
-  margin: 0 auto;
-  perspective: 2200px; /* controls depth */
-}
+/* Stage */
+.flipbook-stage { position:relative; max-width:1100px; margin:0 auto; perspective:2200px; }
 .flipbook-viewer {
-  width: 100%;
-  height: 540px;            /* adjust height for your images */
-  max-height: 75vh;
-  margin: 0 auto;
-  position: relative;
-  transform-style: preserve-3d;
-  overflow: visible;
+  width:100%;
+  height:560px;           /* adjust to match your images */
+  max-height:75vh;
+  margin:0 auto;
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:visible;
 }
 
-/* spread (two pages side-by-side) container */
+/* Spread container */
 .flip-spread {
-  position: relative;
-  width: 100%;
-  max-width: 1000px;
-  height: 100%;
+  width:100%;
+  max-width:1000px;
+  height:100%;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  position:relative;
+}
+
+/* page halves */
+.flip-half {
+  width:50%;
+  height:100%;
+  box-sizing:border-box;
+  padding:12px;
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  perspective: 2200px;
 }
 
-/* left and right page containers */
-.flip-page {
-  width: 50%;
-  height: calc(100% - 20px);
-  box-sizing: border-box;
-  padding: 10px;
-  position: relative;
-  transform-origin: left center;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-backface-visibility: hidden;
-}
-
-/* right page rotates from right origin */
-.flip-page.right { transform-origin: right center; }
-
-/* page face (image) */
-.page-face {
-  position:absolute;
-  inset: 0;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  background: #fff;
-}
-.page-face img {
-  width: 100%;
+/* page face */
+.page-box {
+  width:100%;
   height:100%;
-  object-fit: cover;
-  display:block;
+  border-radius:6px;
+  overflow:hidden;
+  box-shadow:0 18px 50px rgba(0,0,0,0.12);
+  background:#fff;
+  position:relative;
 }
+.page-box img { width:100%; height:100%; object-fit:cover; display:block; }
 
-/* The flipping element sits above a static page */
-
-.flip-anim {
+/* flipping layer (on top during animation) */
+.flip-layer {
   position:absolute;
-  top:0; left:0;
-  width:100%; height:100%;
-  transform-origin: left center;
-  backface-visibility: hidden;
-  will-change: transform;
+  top:0;
+  bottom:0;
+  width:50%;
+  z-index:80;
   pointer-events:none;
-  z-index: 50;
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+  will-change: transform;
 }
 
-/* page shadow and gradient for realism */
-.flip-shadow {
+/* left flip sits over the left half and rotates from left edge */
+.flip-layer.left {
+  left:0;
+  transform-origin: left center;
+}
+/* right flip sits over the right half and rotates from right edge */
+.flip-layer.right {
+  right:0;
+  transform-origin: right center;
+}
+
+/* shadow */
+.flip-gradient {
   position:absolute;
   inset:0;
-  background: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.02));
-  opacity:0;
-  transition:opacity 220ms;
   pointer-events:none;
+  background:linear-gradient(90deg, rgba(0,0,0,0.14), rgba(0,0,0,0));
+  opacity:0;
+  transition:opacity 160ms;
 }
 
-/* control buttons */
+/* controls */
 .flip-control {
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:44px; height:44px;
-  border-radius:50%;
-  background: rgba(255,255,255,0.9);
-  border: 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  cursor:pointer;
-  z-index:200;
+  width:46px; height:46px;
+  border-radius:999px;
+  border:0; background:rgba(255,255,255,0.95);
+  box-shadow:0 10px 30px rgba(0,0,0,0.12);
+  cursor:pointer; z-index:200; font-size:22px;
   display:flex; align-items:center; justify-content:center;
-  font-size:22px;
 }
-.flip-prev { left: -12px; }
-.flip-next { right: -12px; }
+.flip-prev { left:-14px; } .flip-next { right:-14px; }
 
-/* UI bottom */
+/* ui bottom */
 .flip-ui {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 8px;
-  display:flex; align-items:center; gap:12px;
-  z-index:200;
-  background: rgba(255,255,255,0.85);
-  padding:6px 10px; border-radius:999px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  position:absolute; left:50%; transform:translateX(-50%); bottom:12px;
+  z-index:200; display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.9); padding:6px 10px; border-radius:999px; box-shadow:0 10px 30px rgba(0,0,0,0.06);
 }
-.flip-pageno { font-weight:600; color:#111; }
+.flip-pageno { font-weight:600; color:#111; padding-right:8px; }
+.flip-action { background:transparent; border:0; cursor:pointer; font-size:16px; }
 
-/* responsive */
-@media (max-width:900px) {
-  .flipbook-viewer { height: 420px; }
-  .flip-control { width:38px; height:38px; font-size:18px; }
+/* small screens */
+@media (max-width:980px) {
+  .flipbook-viewer { height:460px; }
+  .flip-control { width:40px; height:40px; font-size:18px; }
 }
 @media (max-width:560px) {
-  .flipbook-viewer { height: 360px; }
-  .flip-page { padding:6px; }
-  .flip-prev { left: -6px; } .flip-next { right: -6px; }
+  .flipbook-viewer { height:360px; }
+  .flip-half { padding:6px; }
+  .flip-prev { left:-6px; } .flip-next { right:-6px; }
 }

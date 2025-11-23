@@ -7,3 +7,36 @@ npm-debug.log*
 yarn-error.log*
 dist/
 coverage/
+@"
+# Node
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Env files & secrets
+.env
+.env.local
+lib/.env.local
+serviceAccountKey.json
+
+# Build outputs and local DBs
+dist/
+build/
+data/
+*.sqlite
+*.db
+
+# Logs
+logs/
+*.log
+
+# Misc
+public/images/brochure*.jpg
+"@ > .gitignore
+
+git status --porcelain

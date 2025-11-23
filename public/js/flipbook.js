@@ -1,8 +1,7 @@
 // public/js/flipbook.js
-(function () {
-  // ensure pages are provided
+(function(){
   const pages = window.FLIPBOOK_PAGES || [];
-  if (!pages.length) return console.warn('[FLIPBOOK] No pages defined.');
+  if (!pages.length) { console.warn('[FLIPBOOK] No pages provided.'); return; }
 
   const viewer = document.getElementById('flipbook-viewer');
   const prevBtn = document.getElementById('flip-prev');
@@ -11,205 +10,312 @@
   const downloadEl = document.getElementById('flip-download');
   const zoomBtn = document.getElementById('flip-zoom');
 
-  // Build spreads: each spread shows two pages (left,right). Use pages[0] as left of spread 0?
-  // We'll treat page indices as 0-based. Spread 0 shows pages[0] (left) + pages[1] (right)
+  // build spreads: pair pages into spreads (left,right)
   const spreads = [];
-  for (let i = 0; i < pages.length; i += 2) {
-    const left = pages[i] || null;
-    const right = pages[i + 1] || null;
-    spreads.push({ left, right });
-  }
+  for (let i = 0; i < pages.length; i += 2) spreads.push({ left: pages[i] || null, right: pages[i+1] || null });
 
-  let currentSpread = 0;
-  let isAnimating = false;
-  let isZoomed = false;
+  let current = 0;
+  let animating = false;
+  let zoomed = false;
 
-  function renderSpread(idx) {
-    viewer.innerHTML = ''; // clear
-    const spread = spreads[idx];
-    // wrapper
-    const wrap = document.createElement('div');
-    wrap.className = 'flip-spread';
+  function render(index) {
+    viewer.innerHTML = '';
+    const spread = spreads[index];
+    const container = document.createElement('div');
+    container.className = 'flip-spread';
 
-    // left static page (under)
-    const leftWrap = document.createElement('div');
-    leftWrap.className = 'flip-page left';
-    const leftFace = document.createElement('div');
-    leftFace.className = 'page-face';
+    // left half
+    const leftHalf = document.createElement('div');
+    leftHalf.className = 'flip-half';
+    const leftBox = document.createElement('div');
+    leftBox.className = 'page-box';
     if (spread.left) {
-      const img = document.createElement('img'); img.src = spread.left; img.alt = 'Left page'; leftFace.appendChild(img);
-    } else leftFace.innerHTML = '';
-    leftWrap.appendChild(leftFace);
-    wrap.appendChild(leftWrap);
+      const img = document.createElement('img'); img.src = spread.left; img.alt = 'Left page'; leftBox.appendChild(img);
+    }
+    leftHalf.appendChild(leftBox);
+    container.appendChild(leftHalf);
 
-    // right static page (under)
-    const rightWrap = document.createElement('div');
-    rightWrap.className = 'flip-page right';
-    const rightFace = document.createElement('div');
-    rightFace.className = 'page-face';
+    // right half
+    const rightHalf = document.createElement('div');
+    rightHalf.className = 'flip-half';
+    const rightBox = document.createElement('div');
+    rightBox.className = 'page-box';
     if (spread.right) {
-      const img = document.createElement('img'); img.src = spread.right; img.alt = 'Right page'; rightFace.appendChild(img);
-    } else rightFace.innerHTML = '';
-    rightWrap.appendChild(rightFace);
-    wrap.appendChild(rightWrap);
-
-    // flipping layer: we create a page element that will rotate over
-    // Create left flip element (to flip previous "right" to left)
-    const flipLeft = document.createElement('div');
-    flipLeft.className = 'flip-anim flip-left';
-    flipLeft.style.zIndex = 60;
-    const flipLeftFace = document.createElement('div'); flipLeftFace.className = 'page-face';
-    flipLeftFace.style.visibility = 'hidden'; // shown during flip
-    flipLeft.appendChild(flipLeftFace);
-    wrap.appendChild(flipLeft);
-
-    // Create right flip element (to flip current left to right)
-    const flipRight = document.createElement('div');
-    flipRight.className = 'flip-anim flip-right';
-    flipRight.style.zIndex = 60;
-    const flipRightFace = document.createElement('div'); flipRightFace.className = 'page-face';
-    flipRightFace.style.visibility = 'hidden';
-    flipRight.appendChild(flipRightFace);
-    wrap.appendChild(flipRight);
-
-    // shadow overlay for realism
-    const shadow = document.createElement('div'); shadow.className = 'flip-shadow';
-    wrap.appendChild(shadow);
-
-    viewer.appendChild(wrap);
-
-    // Update page number and download link
-    const totalSpreads = spreads.length;
-    pagenoEl.textContent = `${idx + 1} / ${totalSpreads}`;
-    if (spread.right) {
-      downloadEl.href = spread.right;
-      downloadEl.setAttribute('download', `brochure-spread-${idx + 1}.jpg`);
-    } else if (spread.left) {
-      downloadEl.href = spread.left;
-      downloadEl.setAttribute('download', `brochure-spread-${idx + 1}.jpg`);
-    } else {
-      downloadEl.href = '#';
-      downloadEl.removeAttribute('download');
+      const img2 = document.createElement('img'); img2.src = spread.right; img2.alt = 'Right page'; rightBox.appendChild(img2);
     }
+    rightHalf.appendChild(rightBox);
+    container.appendChild(rightHalf);
 
-    // Prepare flip faces images (for animation)
-    if (spread.left && flipRightFace) {
-      const img = document.createElement('img'); img.src = spread.left; img.alt = 'flip';
-      flipRightFace.innerHTML = ''; flipRightFace.appendChild(img);
-      flipRightFace.style.visibility = 'visible';
-    }
-    if (spread.right && flipLeftFace) {
-      const img2 = document.createElement('img'); img2.src = spread.right; img2.alt = 'flip';
-      flipLeftFace.innerHTML = ''; flipLeftFace.appendChild(img2);
-      flipLeftFace.style.visibility = 'visible';
-    }
+    // flip layers (invisible until used)
+    const flipLeft = document.createElement('div'); flipLeft.className = 'flip-layer left';
+    const flipRight = document.createElement('div'); flipRight.className = 'flip-layer right';
+    const flImg = document.createElement('div'); flImg.className = 'page-box'; flipLeft.appendChild(flImg);
+    const frImg = document.createElement('div'); frImg.className = 'page-box'; flipRight.appendChild(frImg);
+    container.appendChild(flipLeft);
+    container.appendChild(flipRight);
+
+    // gradient overlay for shadow
+    const grad = document.createElement('div'); grad.className = 'flip-gradient';
+    container.appendChild(grad);
+
+    viewer.appendChild(container);
+
+    // update UI
+    pagenoEl.textContent = `${index+1} / ${spreads.length}`;
+    const downloadTarget = spread.right || spread.left || '#';
+    downloadEl.href = downloadTarget;
+    downloadEl.setAttribute('download', `brochure-spread-${index+1}.jpg`);
   }
 
-  // animate forward: emulate right page flipping to reveal next spread
-  function turnNext() {
-    if (isAnimating) return;
-    if (currentSpread >= spreads.length - 1) return;
-    isAnimating = true;
+  // simple animation functions
+  function animateNext() {
+    if (animating || current >= spreads.length-1) return;
+    animating = true;
+    const spreadWrap = viewer.querySelector('.flip-spread');
+    const flipRight = spreadWrap.querySelector('.flip-layer.right');
+    const frontBox = flipRight.querySelector('.page-box');
 
-    const spread = spreads[currentSpread];
-    const viewerSpread = viewer.querySelector('.flip-spread');
-    const flipRight = viewerSpread.querySelector('.flip-right');
-    const flipFace = flipRight.querySelector('.page-face');
+    // set flip image to current left (will appear to flip away)
+    const curLeft = spreads[current].left;
+    if (curLeft) {
+      frontBox.innerHTML = `<img src="${curLeft}" alt="flip">`;
+    } else {
+      frontBox.innerHTML = '';
+    }
 
-    // set initial transform origin and styles
+    // initial setup
+    flipRight.style.transition = 'transform 700ms cubic-bezier(.25,.9,.25,1)';
     flipRight.style.transformOrigin = 'left center';
     flipRight.style.transform = 'rotateY(0deg)';
-    flipRight.style.left = '50%';
+    flipRight.style.zIndex = 90;
     flipRight.style.pointerEvents = 'none';
-    flipFace.style.boxShadow = '0 18px 60px rgba(0,0,0,0.28)';
 
-    // animate: rotate from 0 to -180deg
-    flipRight.animate([
-      { transform: 'rotateY(0deg)' },
-      { transform: 'rotateY(-180deg)' }
-    ], {
-      duration: 700,
-      easing: 'cubic-bezier(.25,.8,.25,1)',
-      fill: 'forwards'
-    }).onfinish = () => {
-      currentSpread++;
-      renderSpread(currentSpread);
-      isAnimating = false;
-    };
+    // shadow show
+    const grad = spreadWrap.querySelector('.flip-gradient');
+    grad.style.opacity = '1';
+
+    // animate
+    requestAnimationFrame(() => {
+      flipRight.style.transform = 'rotateY(-180deg)';
+    });
+
+    flipRight.addEventListener('transitionend', function handler() {
+      flipRight.removeEventListener('transitionend', handler);
+      current++;
+      render(current);
+      animating = false;
+      grad.style.opacity = '0';
+    });
   }
 
-  // animate backward: emulate left page flipping back
-  function turnPrev() {
-    if (isAnimating) return;
-    if (currentSpread <= 0) return;
-    isAnimating = true;
+  function animatePrev() {
+    if (animating || current <= 0) return;
+    animating = true;
+    const spreadWrap = viewer.querySelector('.flip-spread');
+    const flipLeft = spreadWrap.querySelector('.flip-layer.left');
+    const frontBox = flipLeft.querySelector('.page-box');
 
-    const viewerSpread = viewer.querySelector('.flip-spread');
-    const flipLeft = viewerSpread.querySelector('.flip-left');
-    const flipFace = flipLeft.querySelector('.page-face');
+    const curRight = spreads[current].right;
+    if (curRight) {
+      frontBox.innerHTML = `<img src="${curRight}" alt="flip">`;
+    } else frontBox.innerHTML = '';
 
+    flipLeft.style.transition = 'transform 700ms cubic-bezier(.25,.9,.25,1)';
     flipLeft.style.transformOrigin = 'right center';
     flipLeft.style.transform = 'rotateY(0deg)';
-    flipLeft.style.right = '50%';
-    flipFace.style.boxShadow = '0 18px 60px rgba(0,0,0,0.28)';
+    flipLeft.style.zIndex = 90;
+    flipLeft.style.pointerEvents = 'none';
 
-    // animate rotate from 0 to +180deg (flip back)
-    flipLeft.animate([
-      { transform: 'rotateY(0deg)' },
-      { transform: 'rotateY(180deg)' }
-    ], {
-      duration: 700,
-      easing: 'cubic-bezier(.25,.8,.25,1)',
-      fill: 'forwards'
-    }).onfinish = () => {
-      currentSpread--;
-      renderSpread(currentSpread);
-      isAnimating = false;
-    };
+    const grad = spreadWrap.querySelector('.flip-gradient');
+    grad.style.opacity = '1';
+
+    requestAnimationFrame(() => {
+      flipLeft.style.transform = 'rotateY(180deg)';
+    });
+
+    flipLeft.addEventListener('transitionend', function handler(){
+      flipLeft.removeEventListener('transitionend', handler);
+      current--;
+      render(current);
+      animating = false;
+      grad.style.opacity = '0';
+    });
   }
 
-  // keyboard navigation
-  function keyHandler(e) {
-    if (e.key === 'ArrowRight') turnNext();
-    if (e.key === 'ArrowLeft') turnPrev();
-    if (e.key === 'Escape' && isZoomed) toggleZoom();
+  // pointer drag to control flip progress
+  function enableDrag() {
+    const viewerEl = viewer;
+    let dragging = false;
+    let startX = 0;
+    let targetLayer = null;
+    let maxWidth = 0;
+
+    function down(e) {
+      if (animating) return;
+      dragging = true;
+      startX = (e.touches ? e.touches[0].clientX : e.clientX);
+      maxWidth = viewerEl.getBoundingClientRect().width;
+      // decide which half user started on
+      const rect = viewerEl.getBoundingClientRect();
+      const relativeX = startX - rect.left;
+      if (relativeX > rect.width/2) {
+        // started on right half -> interactive next flip
+        targetLayer = viewerEl.querySelector('.flip-layer.right');
+        const curLeft = spreads[current].left;
+        targetLayer.querySelector('.page-box').innerHTML = curLeft ? `<img src="${curLeft}" alt="flip">` : '';
+        targetLayer.style.zIndex = 120;
+        targetLayer.style.transition = 'none';
+      } else {
+        // started on left half -> interactive prev flip
+        targetLayer = viewerEl.querySelector('.flip-layer.left');
+        const curRight = spreads[current].right;
+        targetLayer.querySelector('.page-box').innerHTML = curRight ? `<img src="${curRight}" alt="flip">` : '';
+        targetLayer.style.zIndex = 120;
+        targetLayer.style.transition = 'none';
+      }
+      // show shadow
+      const g = viewerEl.querySelector('.flip-gradient'); if (g) g.style.opacity = '1';
+    }
+
+    function move(e) {
+      if (!dragging || !targetLayer) return;
+      const x = (e.touches ? e.touches[0].clientX : e.clientX);
+      const rect = viewerEl.getBoundingClientRect();
+      const rel = (x - rect.left) / rect.width; // 0..1
+      // compute rotate based on rel and which side
+      if (targetLayer.classList.contains('right')) {
+        // when dragging left -> rotate towards -180
+        const p = Math.max(0, Math.min(1, 1 - ((x - rect.left) / (rect.width/2))));
+        const deg = -p * 180;
+        targetLayer.style.transform = `rotateY(${deg}deg)`;
+      } else {
+        // left layer: dragging right -> rotate towards +180
+        const p = Math.max(0, Math.min(1, ((x - rect.left) / (rect.width/2))));
+        const deg = p * 180;
+        targetLayer.style.transform = `rotateY(${deg}deg)`;
+      }
+    }
+
+    function up(e) {
+      if (!dragging || !targetLayer) { dragging = false; targetLayer = null; return; }
+      const x = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
+      const rect = viewerEl.getBoundingClientRect();
+      const halfway = rect.left + rect.width/4; // threshold
+      // determine whether to complete flip
+      if (targetLayer.classList.contains('right')) {
+        // if we dragged left enough (x < center) -> complete next
+        if (x < rect.left + rect.width * 0.4) {
+          // finish
+          targetLayer.style.transition = 'transform 300ms cubic-bezier(.2,.9,.25,1)';
+          targetLayer.style.transform = 'rotateY(-180deg)';
+          targetLayer.addEventListener('transitionend', function h(){
+            targetLayer.removeEventListener('transitionend', h);
+            current = Math.min(spreads.length-1, current+1);
+            render(current);
+          });
+        } else {
+          // revert
+          targetLayer.style.transition = 'transform 260ms';
+          targetLayer.style.transform = 'rotateY(0deg)';
+        }
+      } else {
+        if (x > rect.left + rect.width * 0.6) {
+          targetLayer.style.transition = 'transform 300ms cubic-bezier(.2,.9,.25,1)';
+          targetLayer.style.transform = 'rotateY(180deg)';
+          targetLayer.addEventListener('transitionend', function h(){
+            targetLayer.removeEventListener('transitionend', h);
+            current = Math.max(0, current-1);
+            render(current);
+          });
+        } else {
+          targetLayer.style.transition = 'transform 260ms';
+          targetLayer.style.transform = 'rotateY(0deg)';
+        }
+      }
+      // hide shadow
+      const g = viewerEl.querySelector('.flip-gradient'); if (g) g.style.opacity = '0';
+      dragging = false; targetLayer = null;
+    }
+
+    viewerEl.addEventListener('pointerdown', down, {passive:true});
+    viewerEl.addEventListener('pointermove', move, {passive:true});
+    viewerEl.addEventListener('pointerup', up, {passive:true});
+    viewerEl.addEventListener('pointercancel', up, {passive:true});
+    // touch fallback (some browsers)
+    viewerEl.addEventListener('touchstart', down, {passive:true});
+    viewerEl.addEventListener('touchmove', move, {passive:true});
+    viewerEl.addEventListener('touchend', up, {passive:true});
   }
 
-  // zoom toggle (simple scale)
+  // keyboard
+  function enableKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { animateNext(); }
+      if (e.key === 'ArrowLeft') { animatePrev(); }
+      if (e.key === 'Escape' && zoomed) { toggleZoom(); }
+    });
+  }
+
+  // zoom
   function toggleZoom() {
     const stage = document.getElementById('flipbook-stage');
-    if (!stage) return;
-    isZoomed = !isZoomed;
-    stage.style.transform = isZoomed ? 'scale(1.15)' : '';
-    stage.style.transition = 'transform 260ms';
+    zoomed = !zoomed;
+    stage.style.transform = zoomed ? 'scale(1.12)' : '';
+    stage.style.transition = 'transform 220ms';
   }
 
-  // touch swipe short handlers (left/right)
-  let touchStartX = 0;
-  function touchStart(e) { touchStartX = e.touches ? e.touches[0].clientX : e.clientX; }
-  function touchEnd(e) {
-    const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-    const diff = endX - touchStartX;
-    if (Math.abs(diff) < 40) return;
-    if (diff < 0) turnNext(); else turnPrev();
+  // initial simple controls
+  function animateNext() {
+    if (animating || current >= spreads.length-1) return;
+    animating = true;
+    const spreadWrap = viewer.querySelector('.flip-spread');
+    const flipRight = spreadWrap.querySelector('.flip-layer.right');
+    const frontBox = flipRight.querySelector('.page-box');
+    const curLeft = spreads[current].left;
+    if (curLeft) frontBox.innerHTML = `<img src="${curLeft}" alt="flip">`; else frontBox.innerHTML='';
+    flipRight.style.transition = 'transform 700ms cubic-bezier(.2,.9,.25,1)';
+    flipRight.style.transformOrigin = 'left center';
+    flipRight.style.transform = 'rotateY(-180deg)';
+    const grad = spreadWrap.querySelector('.flip-gradient'); if (grad) grad.style.opacity = '1';
+    flipRight.addEventListener('transitionend', function h(){
+      flipRight.removeEventListener('transitionend', h);
+      current = Math.min(spreads.length-1, current+1);
+      render(current);
+      animating = false;
+      if (grad) grad.style.opacity = '0';
+    });
+  }
+  function animatePrev() {
+    if (animating || current <= 0) return;
+    animating = true;
+    const spreadWrap = viewer.querySelector('.flip-spread');
+    const flipLeft = spreadWrap.querySelector('.flip-layer.left');
+    const frontBox = flipLeft.querySelector('.page-box');
+    const curRight = spreads[current].right;
+    if (curRight) frontBox.innerHTML = `<img src="${curRight}" alt="flip">`; else frontBox.innerHTML='';
+    flipLeft.style.transition = 'transform 700ms cubic-bezier(.2,.9,.25,1)';
+    flipLeft.style.transformOrigin = 'right center';
+    flipLeft.style.transform = 'rotateY(180deg)';
+    const grad = spreadWrap.querySelector('.flip-gradient'); if (grad) grad.style.opacity = '1';
+    flipLeft.addEventListener('transitionend', function h(){
+      flipLeft.removeEventListener('transitionend', h);
+      current = Math.max(0, current-1);
+      render(current);
+      animating = false;
+      if (grad) grad.style.opacity = '0';
+    });
   }
 
-  // events
-  prevBtn.addEventListener('click', turnPrev);
-  nextBtn.addEventListener('click', turnNext);
-  document.addEventListener('keydown', keyHandler);
-  viewer.addEventListener('touchstart', touchStart);
-  viewer.addEventListener('touchend', touchEnd);
-  viewer.addEventListener('mousedown', touchStart);
-  viewer.addEventListener('mouseup', touchEnd);
+  // wire up events
+  function wire() {
+    prevBtn && prevBtn.addEventListener('click', () => { animatePrev(); });
+    nextBtn && nextBtn.addEventListener('click', () => { animateNext(); });
+    zoomBtn && zoomBtn.addEventListener('click', toggleZoom);
+    enableDrag(); enableKeyboard();
+  }
 
-  zoomBtn && zoomBtn.addEventListener('click', toggleZoom);
-
-  // initial render and simple autoplay demo (optional)
-  renderSpread(currentSpread);
-
-  // Optional: autoplay (comment out if not desired)
-  // let autoplay = false, apTimer;
-  // if (autoplay) apTimer = setInterval(()=>{ if (!isAnimating) { if (currentSpread < spreads.length-1) turnNext(); else currentSpread= -1 }}, 5500);
+  // start
+  render(current);
+  wire();
 
 })();
